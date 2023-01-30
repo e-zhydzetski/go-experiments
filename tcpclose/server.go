@@ -51,13 +51,11 @@ func echo(c net.Conn, shout string, delay time.Duration) error {
 func handleConn(c net.Conn) {
 	defer c.Close()
 	input := bufio.NewScanner(c)
-	for input.Scan() {
-		go func() {
-			err := echo(c, input.Text(), 1*time.Second)
-			if err != nil {
-				log.Println("echo error:", err)
-			}
-		}()
+	if input.Scan() {
+		err := echo(c, input.Text(), 1*time.Second)
+		if err != nil {
+			log.Println("echo error:", err)
+		}
 	}
 	if err := input.Err(); err != nil {
 		log.Println("scanner error:", err)

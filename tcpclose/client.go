@@ -26,14 +26,8 @@ func ConnectAndSendMsg(addr string, msg string) error {
 		close(done) // signal the main goroutine
 	}()
 	_, _ = io.Copy(conn, strings.NewReader(msg))
-	err = conn.CloseWrite()
-	if err != nil {
-		return fmt.Errorf("close write: %v", err)
-	}
+	_ = conn.CloseWrite()
 	<-done // wait for background goroutine to finish
-	err = conn.CloseRead()
-	if err != nil {
-		return fmt.Errorf("close read: %v", err)
-	}
+	_ = conn.CloseRead()
 	return nil
 }

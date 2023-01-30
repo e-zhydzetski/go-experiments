@@ -6,3 +6,7 @@
 
 1. execute `task docker-test`
 2. open `./dump.cap` with Wireshark or similar tool
+
+# Info 
+
+* https://www.linux.org.ru/forum/development/16272092?cid=16274075
