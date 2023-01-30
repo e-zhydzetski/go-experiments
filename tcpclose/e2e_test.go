@@ -14,8 +14,12 @@ func Test(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = tcpclose.ConnectAndSendMsg(fmt.Sprintf("127.0.0.1:%d", port), "Test msg\n")
+	answer, err := tcpclose.ConnectAndSendMsg(fmt.Sprintf("127.0.0.1:%d", port), "Test msg\n")
 	if err != nil {
 		t.Fatal(err)
+	}
+	expected := "\t TEST MSG\n\t Test msg\n\t test msg\n"
+	if answer != expected {
+		t.Fatalf("invalid answer: expected '%s', got '%s'", expected, answer)
 	}
 }

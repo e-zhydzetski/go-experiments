@@ -1,33 +1,37 @@
 package tcpclose
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"log"
 	"net"
-	"os"
 	"strings"
 )
 
-func ConnectAndSendMsg(addr string, msg string) error {
+func ConnectAndSendMsg(addr string, msg string) (string, error) {
 	tcpAdr, err := net.ResolveTCPAddr("tcp", addr)
 	if err != nil {
-		return fmt.Errorf("resolve tcp: %v", err)
+		return "", fmt.Errorf("resolve tcp: %v", err)
 	}
 	conn, err := net.DialTCP("tcp", nil, tcpAdr)
 	if err != nil {
-		return fmt.Errorf("dial tcp: %v", err)
+		return "", fmt.Errorf("dial tcp: %v", err)
 	}
 	defer conn.Close()
-	done := make(chan struct{})
+
+	readDone := make(chan struct{})
+	answer := bytes.NewBuffer(nil)
 	go func() {
-		_, err := io.Copy(os.Stdout, conn)
-		log.Println("done", err)
-		close(done) // signal the main goroutine
+		_, err := io.Copy(answer, conn)
+		log.Println("readDone, error:", err)
+		close(readDone) // signal the main goroutine
 	}()
+
 	_, _ = io.Copy(conn, strings.NewReader(msg))
 	_ = conn.CloseWrite()
-	<-done // wait for background goroutine to finish
+	<-readDone
 	_ = conn.CloseRead()
-	return nil
+
+	return answer.String(), nil
 }
