@@ -24,7 +24,7 @@ func StartServer(ctx context.Context, listenAddr string) (int, error) {
 		for {
 			conn, err := l.Accept()
 			if err != nil {
-				log.Print(err)
+				log.Print("accept error:", err)
 				break
 			}
 			go handleConn(conn)
@@ -54,15 +54,15 @@ func echo(c net.Conn, shout string, delay time.Duration) error {
 func handleConn(c net.Conn) {
 	input := bufio.NewScanner(c)
 	var wg sync.WaitGroup
-	if input.Scan() {
+	for input.Scan() {
 		wg.Add(1)
-		go func() {
+		go func(text string) {
 			defer wg.Done()
-			err := echo(c, input.Text(), 1*time.Second)
+			err := echo(c, text, 1*time.Second)
 			if err != nil {
 				log.Println("echo error:", err)
 			}
-		}()
+		}(input.Text())
 	}
 	if err := input.Err(); err != nil {
 		log.Println("scanner error:", err)
