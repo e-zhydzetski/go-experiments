@@ -1,3 +1,3 @@
-module github.com/e-zhydzetski/strips-tt/threads
+module github.com/e-zhydzetski/go-experiments/threads
 
 go 1.19

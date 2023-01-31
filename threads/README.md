@@ -1,5 +1,7 @@
 # Threads
 
+> Check OS threads count in case of multiple long-lived outgoing network connections without explicit epoll.
+
 ## Setup
 
 * `task test` - test in host OS, sends 1000 parallel requests to https://httpbin.org/delay/10
